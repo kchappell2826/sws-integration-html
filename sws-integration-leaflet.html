@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!--
+ Copyright (c) 2013, CoreLogic, Inc. All rights reserved.
+ Redistribution and use in source and binary forms, with or without modification, are permitted
+ provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice,
+      this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+    * Neither the name of CoreLogic nor the names of its
+      contributors may be used to endorse or promote products derived from
+      this software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+
+        <style>
+            /* Basic style class to give the map container explicit dimensions */
+            .map-container {
+                position: relative;
+                width: 600px;
+                height: 600px;
+            }
+
+            .control {
+                float: left;
+            }
+        </style>
+
+        <!-- This javascript include is only necessary for browsers which do not natively support the JSON object -->
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/json2/20121008/json2.js"></script>
+
+        <!-- This javascript include provides the Leaflet API -->
+        <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+
+        <script type="text/javascript">
+            function GetAuthKey() {
+                var requestBody = {
+                    "username": document.getElementById("username").value,
+                    "password": document.getElementById("password").value
+                };
+
+                var xmlhttp = new XMLHttpRequest();
+
+                xmlhttp.onreadystatechange = function() {
+                    if(xmlhttp.readyState != 4) return;
+
+                    switch(xmlhttp.status) {
+                        case 200 : {
+                            var response = JSON.parse(xmlhttp.responseText);
+                            document.getElementById("authKey").value = response.authKey;
+                            document.getElementById("refreshMap").click();
+
+                        }; break;
+                        default : {
+                            alert(xmlhttp.responseText);
+                        }
+                    };
+                };
+
+                xmlhttp.open("POST", "http://sws.corelogic.com/api/authenticate", false);
+                xmlhttp.setRequestHeader("Content-Type", "application/json");
+                xmlhttp.setRequestHeader("Accept", "application/json");
+                xmlhttp.send(JSON.stringify(requestBody));
+            };
+
+            function GetMap() {
+                var authKey = document.getElementById("authKey").value;
+
+                if(!authKey) {
+                    alert("An authKey is required to load map. To proceed, authenticate to get an authKey.");
+                    return;
+                }
+
+                var map = L.map('myMap').setView([30.33969473417851, -91.1041259765625], 15);
+
+                L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpg', {
+                    "maxZoom": 21,
+                    "attribution": 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">',
+                    "subdomains": '1234'
+                }).addTo(map);
+
+                L.tileLayer('http://sws.corelogic.com/api/tile/gmap?x={x}&y={y}&zoom={z}&layers=fass:flood&styles=floodpolygonalt&authKey=' + authKey, {
+                    "minZoom": 12,
+                    "attribution": 'Flood Data &copy; <a href="http://www.corelogic.com">CoreLogic</a>'
+                }).addTo(map);
+            };
+
+        </script>
+    </head>
+
+    <body>
+        <div class="control" style="width:25%;">
+            <table>
+                <tr>
+                    <td><label for="username">SWS Username</label></td>
+                    <td><input type="text" id="username" /></td>
+                </tr>
+                <tr>
+                    <td><label for="password">SWS Password</label></td>
+                    <td><input type="password" id="password" /></td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="Authenticate" onclick="GetAuthKey();"/></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label for="authKey">SWS authKey</label></td>
+                    <td><input type="text" id="authKey" /></td>
+                </tr>
+                <tr>
+                    <td><input type="button" id="refreshMap" value="Refresh Map" onclick="GetMap();" /></td>
+                </tr>
+            </table>
+        </div>
+        <div id="myMap" class="map-container control" style="margin-left:5%;"></div>
+    </body>
+
+</html>
+
