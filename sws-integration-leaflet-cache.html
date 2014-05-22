@@ -80,7 +80,7 @@
                     };
                 };
 
-                xmlhttp.open("POST", "http://sws.corelogic.com/api/authenticate", false);
+                xmlhttp.open("POST", "http://sws.corelogic.com/api/v3.0.0/authenticate", false);
                 xmlhttp.setRequestHeader("Content-Type", "application/json");
                 xmlhttp.setRequestHeader("Accept", "application/json");
                 xmlhttp.send(JSON.stringify(requestBody));
@@ -102,7 +102,7 @@
                     "subdomains": '1234'
                 }).addTo(map);
 
-                L.tileLayer('http://sws.corelogic.com/api/tile/gmap/cache?x={x}&y={y}&zoom={z}&layer=fass:flood&authKey=' + authKey, {
+                L.tileLayer('http://sws.corelogic.com/api/v3.0.0/tile/gmap/cache?x={x}&y={y}&zoom={z}&layer=fass:flood&authKey=' + authKey, {
                     "minZoom": 12,
                     "attribution": 'Flood Data &copy; <a href="http://www.corelogic.com">CoreLogic</a>'
                 }).addTo(map);

@@ -76,7 +76,7 @@
                     };
                 };
 
-                xmlhttp.open("POST", "http://sws.corelogic.com/api/authenticate", false);
+                xmlhttp.open("POST", "http://sws.corelogic.com/api/v3.0.0/authenticate", false);
                 xmlhttp.setRequestHeader("Content-Type", "application/json");
                 xmlhttp.setRequestHeader("Accept", "application/json");
                 xmlhttp.send(JSON.stringify(requestBody));
@@ -96,7 +96,7 @@
                 var mapCenter = new VELatLong(30.33969473417851, -91.1041259765625);
 
                 // This URL points to the CoreLogic service that Virtual Earth will call upon for image data
-                var url = "http://sws.corelogic.com/api" +
+                var url = "http://sws.corelogic.com/api/v3.0.0" +
                           "/tile/bing/cache" +
                           "?quadKey=%4" +
                           "&layer=fass:flood" +

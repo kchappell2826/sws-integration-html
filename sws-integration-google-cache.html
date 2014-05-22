@@ -76,7 +76,7 @@
                     };
                 };
 
-                xmlhttp.open("POST", "http://sws.corelogic.com/api/authenticate", false);
+                xmlhttp.open("POST", "http://sws.corelogic.com/api/v3.0.0/authenticate", false);
                 xmlhttp.setRequestHeader("Content-Type", "application/json");
                 xmlhttp.setRequestHeader("Accept", "application/json");
                 xmlhttp.send(JSON.stringify(requestBody));
@@ -100,7 +100,7 @@
                 // This URL points to the CoreLogic service that Google will call upon for image data
                 var overlayOptions =  {
                     "getTileUrl": function(coord, zoom) {
-                        return "http://sws.corelogic.com/api" +
+                        return "http://sws.corelogic.com/api/v3.0.0" +
                                 "/tile/gmap" +
                                 "?x=" + coord.x +
                                 "&y=" + coord.y +
